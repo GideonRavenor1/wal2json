@@ -6,15 +6,18 @@ from typing import NoReturn
 import psycopg2
 from psycopg2.extensions import cursor as Cursor
 
+from config import producer_settings
 from producer.base_repository import BaseRepository
 from producer.repository_test_one import RepositoryTestOne
-from producer.repository_test_two import RepositoryTestTwo
 from producer.repository_test_three import RepositoryTestThree
+from producer.repository_test_two import RepositoryTestTwo
 
 REPOSORORIES = (RepositoryTestOne, RepositoryTestTwo, RepositoryTestThree)
 TABLE_METHODS = ('update', 'insert', 'delete')
 
 SLEEP_TIME = 2
+
+settings = producer_settings
 
 
 class Producer:
@@ -44,13 +47,7 @@ class Producer:
 def run() -> NoReturn:
     print('Starting producer...')
     print("Connecting to database...")
-    with psycopg2.connect(
-        dbname="producer",
-        user="postgres",
-        password="postgres",
-        host="localhost",
-        port="5433"
-    ) as connection:
+    with psycopg2.connect(settings.get_connection_string()) as connection:
         with connection.cursor() as cursor:
             producer = Producer(cursor)
             try:

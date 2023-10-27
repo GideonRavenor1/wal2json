@@ -1,7 +1,9 @@
+Создаем и заполняем `.env` по образу и подобию `env.template`
+
 Запускаем базы данных командой docker-compose up
 
 Запускаем двумя разными процессами 
-* consumer/main.py
-* producer/main.py
+* `consumer/main.py`
+* `producer/main.py`
 
 Смотрим как в реальном времени переливаются данные

@@ -3,6 +3,7 @@ from typing import NoReturn
 import psycopg2
 import psycopg2.extras
 
+from config import consumer_settings, producer_settings
 from consumer.ddl import DDLExtractor
 
 
@@ -20,13 +21,7 @@ class Initializer:
     def _extract_ddl(table_names: list[str]) -> list[str]:
         print("Connecting to producer database...")
         print("Extracting DDL...")
-        with psycopg2.connect(
-            dbname="producer",
-            user="postgres",
-            password="postgres",
-            host="localhost",
-            port="5433"
-        ) as connection:
+        with psycopg2.connect(producer_settings.get_connection_string()) as connection:
             cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
             ddl_operations = []
             for table_name in table_names:
@@ -36,13 +31,7 @@ class Initializer:
     @staticmethod
     def _create_tables(ddl: list[str]) -> None:
         print("Connecting to consumer database...")
-        with psycopg2.connect(
-            dbname="consumer",
-            user="postgres",
-            password="postgres",
-            host="localhost",
-            port="5432"
-        ) as connection:
+        with psycopg2.connect(consumer_settings.get_connection_string()) as connection:
             cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
             print("Creating tables...")
             for ddl_operation in ddl:

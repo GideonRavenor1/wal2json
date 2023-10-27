@@ -3,10 +3,11 @@ from typing import NoReturn
 import psycopg2
 import psycopg2.extras
 from psycopg2 import sql
-from psycopg2.extensions import cursor as Cursor, connection as Connection
-from psycopg2.extras import LogicalReplicationConnection, ReplicationCursor
 from psycopg2.errors import DuplicateObject
+from psycopg2.extensions import connection as Connection, cursor as Cursor
+from psycopg2.extras import LogicalReplicationConnection, ReplicationCursor
 
+from config import consumer_settings, producer_settings
 from consumer.callback import Callback
 from consumer.initializer import Initializer
 
@@ -68,13 +69,7 @@ class Customer:
     
     @staticmethod
     def _get_consumer_connection() -> Connection:
-        return psycopg2.connect(
-            dbname="consumer",
-            user="postgres",
-            password="postgres",
-            host="localhost",
-            port="5432"
-        )
+        return psycopg2.connect(consumer_settings.get_connection_string())
     
     @staticmethod
     def _get_consumer_cursor(connection: Connection) -> Cursor:
@@ -107,33 +102,15 @@ class Customer:
             return 0  # Возвращаем начальную позицию LSN для начала чтения с начала WAL журнала
     
     @staticmethod
-    def _get_consumer_connection() -> Connection:
-        return psycopg2.connect(
-            dbname="consumer",
-            user="postgres",
-            password="postgres",
-            host="localhost",
-            port="5432"
-        )
-    
-    @staticmethod
     def _get_producer_connection() -> LogicalReplicationConnection:
         return psycopg2.connect(
-            dbname="producer",
-            user="postgres",
-            password="postgres",
-            host="localhost",
-            port="5433",
+            producer_settings.get_connection_string(),
             connection_factory=LogicalReplicationConnection
         )
     
     @staticmethod
     def _get_producer_cursor(connection: LogicalReplicationConnection) -> ReplicationCursor:
         return connection.cursor(cursor_factory=ReplicationCursor)
-    
-    @staticmethod
-    def _get_consumer_cursor(connection: Connection) -> Cursor:
-        return connection.cursor()
     
 
 def run() -> NoReturn:

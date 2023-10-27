@@ -7,11 +7,11 @@ services:
       dockerfile: Dockerfile
     container_name: zyfra-postgres-producer
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: producer
+      POSTGRES_USER: ${PRODUCER_USER:-postgres}
+      POSTGRES_PASSWORD: ${PRODUCER_PASSWORD:-postgres}
+      POSTGRES_DB: ${PRODUCER_DB_NAME:-producer}
     ports:
-      - "5433:5432"
+      - "${PRODUCER_PORT:-5433}:5432"
     command: -c wal_level=logical -c max_replication_slots=5 -c max_wal_senders=5 -c wal_sender_timeout=20000
     volumes:
       - postgres_producer_data:/var/lib/postgresql/data
@@ -22,15 +22,28 @@ services:
     image: postgres:16
     container_name: zyfra-postgres-consumer
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: consumer
+      POSTGRES_USER: ${CONSUMER_USER:-postgres}
+      POSTGRES_PASSWORD: ${CONSUMER_PASSWORD:-postgres}
+      POSTGRES_DB: ${CONSUMER_DB_NAME:-consumer}
     ports:
-      - "5432:5432"
+      - "${CONSUMER_PORT:-5432}:5432"
     volumes:
       - postgres_consumer_data:/var/lib/postgresql/data
       - ./initdb_consumer.sh:/docker-entrypoint-initdb.d/initdb.sh
     restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: zyfra-database-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@gmail.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    ports:
+      - '5050:80'
+    depends_on:
+      - postgres_consumer
+      - postgres_producer
 
 
 volumes:

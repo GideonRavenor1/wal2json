@@ -1,7 +1,7 @@
 import json
 
 from psycopg2._psycopg import ReplicationMessage
-from psycopg2.extensions import cursor as Cursor, connection as Connection
+from psycopg2.extensions import connection as Connection, cursor as Cursor
 
 from consumer.base_repository import BaseRepository
 from consumer.repository_test_one import RepositoryTestOne
