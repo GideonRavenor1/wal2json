@@ -62,6 +62,9 @@ def run() -> NoReturn:
             except KeyboardInterrupt:
                 print('Stopped producer..')
                 sys.exit()
+            except Exception as e:
+                print("Unexpected error:", e)
+                sys.exit()
 
 
 if __name__ == '__main__':

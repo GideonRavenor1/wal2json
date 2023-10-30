@@ -1,5 +1,5 @@
 #!/bin/bash
-psql -v ON_ERROR_STOP=1 --username postgres -d producer <<-EOSQL
+psql -v ON_ERROR_STOP=1 --username postgres -d producer <<- EOSQL
      CREATE TABLE IF NOT EXISTS test_1 (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL

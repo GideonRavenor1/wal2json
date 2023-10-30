@@ -1,3 +1,4 @@
+import sys
 from typing import NoReturn
 
 import psycopg2
@@ -35,6 +36,8 @@ class Customer:
             self._consume_stream(producer_cursor, consumer_connection, consumer_cursor)
         except KeyboardInterrupt:
             print("Stopping replication stream...")
+        except Exception as e:
+            print("Unexpected error:", e)
         finally:
             # Сохраняем текущую позицию LSN после остановки чтения
             lsn = producer_cursor.wal_end
@@ -47,6 +50,7 @@ class Customer:
             
             producer_cursor.close()
             producer_connection.close()
+            sys.exit()
         
     def _consume_stream(
         self,
