@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: zyfra-postgres-producer
+    container_name: postgres-producer
     environment:
       POSTGRES_USER: ${PRODUCER_USER:-postgres}
       POSTGRES_PASSWORD: ${PRODUCER_PASSWORD:-postgres}
@@ -20,7 +20,7 @@ services:
 
   postgres_consumer:
     image: postgres:16
-    container_name: zyfra-postgres-consumer
+    container_name: postgres-consumer
     environment:
       POSTGRES_USER: ${CONSUMER_USER:-postgres}
       POSTGRES_PASSWORD: ${CONSUMER_PASSWORD:-postgres}
@@ -34,7 +34,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: zyfra-database-pgadmin
+    container_name: database-pgadmin
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@gmail.com}
